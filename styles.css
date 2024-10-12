@@ -1,0 +1,173 @@
+body {
+    font: normal 20px/1.5 "Fira Sans", "Helvetica Neue", sans-serif;
+    background: #485764;
+    color: #E9ECEF;
+    padding: 150px 0;
+    height: 100vh;
+    margin: 0;
+}
+
+input, .email-body,
+.keyword-list {
+    border: 2px solid #E9ECEF;
+    background-color: #566572;
+    color: #E9ECEF;
+    font-size: 20px;
+    height: 40px;
+    outline: none;
+}
+
+label {
+    color: #E9ECEF;
+}
+
+.container {
+    width: 80%;
+    max-width: 1200px;
+    min-height: 600px;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.container * {
+    box-sizing: border-box;
+}
+
+.flex-container-upper {
+    display: flex;
+    flex-grow: 1;
+}
+
+.left-form {
+    display: flex;
+    flex-grow: 1;
+    padding-right: 10px;
+}
+
+.right-form {
+    display: flex;
+    flex-basis: 30%;
+    padding-left: 10px;
+}
+
+.flex-area-edit-template,
+.flex-area-create-template,
+.flex-area {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin: 0;
+    padding: 0;
+}
+
+.flex-area li {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    padding-bottom: 10px;
+}
+
+.keyword-buttons {
+    display: flex;
+    gap: 5px;
+    margin: 0;
+    padding: 0;
+}
+
+.keyword-buttons button {
+    flex: 1;
+    margin: 0;
+}
+
+.flex-container-lower {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-container-lower ul {
+    display: flex;
+    gap: 10px;
+    list-style-type: none;
+    margin-right: auto;
+    margin: 0;
+    padding: 0;
+}
+
+.flex-container-lower ul li {
+    display: flex;
+}
+
+.create-template-button, 
+.update-keyword-button,
+.remove-keyword-button,
+.create-keyword-button,
+.edit-keyword-button {
+    padding: 8px 16px;
+    border: 2px solid #E9ECEF;
+    background: #0F6082;
+    color: #E9ECEF;
+    font-size:16px;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    border-radius: 2px;
+}
+
+.create-template-button:hover,
+.update-keyword-button:hover,
+.remove-keyword-button:hover,
+.create-keyword-button:hover,
+.edit-keyword-button:hover {
+    background: #0F6082;
+    border: 2px solid #0F171C;
+    color: #0F171C;
+}
+
+.remove-keyword-button {
+    background: #882D31;
+}
+
+.remove-keyword-button:hover {
+    background: #882D31;
+}
+
+.email-body-container {
+    flex-grow: 1;
+}
+
+.email-body {
+    flex-grow: 1;
+    padding: 10px;
+}
+
+.keyword-list-container {
+    display: flex;
+    flex-grow: 1;
+}
+
+.keyword-list {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin: 0;
+    padding: 1px;
+}
+
+.keyword-list li {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    border: 2px solid #E9ECEF;
+    background-color: #566572;
+    cursor: pointer;
+    padding-left: 5px;
+    margin: 2px;
+    height: 35px;
+}
+
+.keyword-list li:hover {
+    background-color: #485764;
+}

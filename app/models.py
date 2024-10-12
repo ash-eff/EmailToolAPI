@@ -29,7 +29,7 @@ class User(UserBase):
 
 class KeyWordBase(BaseModel):
     name: str
-    type: str
+    value: List[str]
     description: Optional[str] = None
 
 class KeyWordCreate(KeyWordBase):

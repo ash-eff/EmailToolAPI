@@ -35,7 +35,7 @@ def read_users() -> List[User]:
     return users_db
 
 def create_keyword(keyword: KeyWordCreate) -> KeyWord:
-    new_keyword = KeyWord(id=len(keywords_db) + 1, name=keyword.name, type=keyword.type, description=keyword.description)
+    new_keyword = KeyWord(id=len(keywords_db) + 1, name=keyword.name, value=keyword.value, description=keyword.description)
     keywords_db.append(new_keyword)
     return new_keyword
 
