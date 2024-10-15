@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 from . import crud
-from .models import User, UserCreate, Project, ProjectCreate, KeyWord, KeyWordCreate, EmailTemplate, EmailTemplateCreate
+from .models import User, UserCreate, Project, ProjectCreate, KeyWord, KeyWordCreate, KeywordType, EmailTemplate, EmailTemplateCreate
 
 router = APIRouter()
 
@@ -49,6 +49,10 @@ def read_keyword(keyword_id: int):
 @router.get("/keywords/", response_model=List[KeyWord])
 def read_keywords():
     return crud.get_keywords()
+
+@router.get("/keyword_types/", response_model=List[KeywordType])
+def read_keyword_types():
+    return crud.get_keyword_types()
 
 @router.post("/email_templates/", response_model=EmailTemplate)
 def create_email_template(email_template: EmailTemplateCreate):

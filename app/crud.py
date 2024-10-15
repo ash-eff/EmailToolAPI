@@ -1,5 +1,5 @@
 from typing import List, Optional
-from .models import User, UserCreate, Project, ProjectCreate, KeyWord, KeyWordCreate, EmailTemplate, EmailTemplateCreate
+from .models import User, UserCreate, Project, ProjectCreate, KeyWord, KeyWordCreate, KeywordType, EmailTemplate, EmailTemplateCreate
 
 users_db = []
 projects_db = []
@@ -21,7 +21,13 @@ def get_projects() -> List[Project]:
     return projects_db
 
 def create_user(user: UserCreate) -> User:
-    new_user = User(id=len(users_db) + 1, email=user.email, full_name=user.full_name)
+    new_user_id = len(users_db) + 1
+    new_user = User(
+        id=new_user_id, 
+        full_name=user.full_name, 
+        email=user.email, 
+        projects=user.projects
+        )
     users_db.append(new_user)
     return new_user
 
@@ -35,7 +41,14 @@ def read_users() -> List[User]:
     return users_db
 
 def create_keyword(keyword: KeyWordCreate) -> KeyWord:
-    new_keyword = KeyWord(id=len(keywords_db) + 1, name=keyword.name, value=keyword.value, description=keyword.description)
+    new_keyword_id = len(keywords_db) + 1
+    new_keyword = KeyWord(
+        id=new_keyword_id, 
+        name=keyword.name, 
+        type=keyword.type, 
+        options=keyword.options, 
+        description=keyword.description
+        )
     keywords_db.append(new_keyword)
     return new_keyword
 
@@ -45,11 +58,20 @@ def get_keyword(keyword_id: int) -> Optional[KeyWord]:
             return keyword
     return None
 
+def get_keyword_types() -> List[KeywordType]:
+    return KeywordType
+    
 def get_keywords() -> List[KeyWord]:
     return keywords_db
 
 def create_email_template(email_template: EmailTemplateCreate) -> EmailTemplate:
-    new_email_template = EmailTemplate(id=len(email_templates_db) + 1, name=email_template.name, body=email_template.body, keywords=email_template.keywords)
+    email_template_id = len(email_templates_db) + 1
+    new_email_template = EmailTemplate(
+        id = email_template_id, 
+        name=email_template.name, 
+        body=email_template.body, 
+        keywords=email_template.keywords
+        )
     email_templates_db.append(new_email_template)
     return new_email_template
 

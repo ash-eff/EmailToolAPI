@@ -1,5 +1,11 @@
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
+from datetime import datetime
+from enum import Enum
+
+class KeywordType(str, Enum):
+    INPUT = "input-field"
+    DROPDOWN = "dropdown-menu"
 
 class ProjectBase(BaseModel):
     name: str
@@ -16,7 +22,7 @@ class Project(ProjectBase):
 class UserBase(BaseModel):
     full_name: str
     email: EmailStr
-    projects: List[Project] = []
+    projects: Optional[List[Project]] = []
 
 class UserCreate(UserBase):
     password: str
@@ -29,7 +35,8 @@ class User(UserBase):
 
 class KeyWordBase(BaseModel):
     name: str
-    value: List[str]
+    type: KeywordType
+    options: Optional[List[str]] = []
     description: Optional[str] = None
 
 class KeyWordCreate(KeyWordBase):
@@ -44,13 +51,13 @@ class KeyWord(KeyWordBase):
 class EmailTemplateBase(BaseModel):
     name: str
     body: str
+    keywords: Optional[List[KeyWord]] = []
 
 class EmailTemplateCreate(EmailTemplateBase):
-    keywords: List[KeyWord]
+    pass
 
 class EmailTemplate(EmailTemplateBase):
     id: int
-    keywords: List[KeyWord]
 
     class Config:
         from_attributes = True
