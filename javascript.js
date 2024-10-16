@@ -1,19 +1,39 @@
 const emailBody = document.getElementById("email-body");
-const savedKeywordsList = document.getElementById("saved-keywords-list");
+
+const keywordsList = document.getElementById("keywords-list");
 const keywordName = document.getElementById("keyword-name");
-const keywordValue = document.getElementById("keyword-value");
-// const updateKeywordButton = document.getElementById("update-keyword-button");
-// const removeKeywordButton = document.getElementById("remove-keyword-button");
+const keywordTypes = document.getElementById("keyword-types");
+
 const createTemplateButton = document.getElementById("create-template-button");
-const swapToCreateKeywordButton = document.getElementById("swap-to-create-keyword-button");
-const swapToEditTemplateButton = document.getElementById("swap-to-edit-template-button");
-const rightForm = document.getElementById("right-form");
+const updateKeywordButton = document.getElementById("update-keyword-button");
+const removeKeywordButton = document.getElementById("remove-keyword-button");
 
 const keywords = new Map();
 
+async function setKeywordTypes() {
+    try {
+        const response = await fetch("http://localhost:8000/keyword_types");
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const types = await response.json();
+
+        keywordTypes.innerHTML = '';
+
+        types.forEach(type => {
+            const option = document.createElement("option");
+            option.textContent = type;
+            keywordTypes.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error fetching types:', error);
+    }
+}
+
 function updateSavedKeywords() {
-    console.log(keywords.size);
-    savedKeywordsList.innerHTML = '';
+    keywordsList.innerHTML = '';
 
     const emailContent = emailBody.value;
 
@@ -36,15 +56,14 @@ function updateSavedKeywords() {
     }
 
     keywords.forEach((value, keyword) => {
-        const li = document.createElement("li");
-        li.textContent = keyword;
-        li.classList.add("keyword-item"); 
+        const option = document.createElement("option");
+        option.textContent = keyword;
     
-        li.addEventListener("click", () => {
+        option.addEventListener("click", () => {
             handleKeywordClick(keyword);
         });
     
-        savedKeywordsList.appendChild(li);
+        keywordsList.appendChild(option);
     });
 }
 
@@ -82,35 +101,6 @@ function createTemplate() {
     console.log("Creating template...");
 }
 
-function loadRightFormContent() {
-    fetch('right-forms.html')
-        .then(response => response.text())
-        .then(data => {
-            rightForm.innerHTML = data;
-            document.getElementById("update-keyword-button").addEventListener("click", updateKeyword);
-            document.getElementById("remove-keyword-button").addEventListener("click", removeKeyword);
-            document.getElementById("add-keyword-button").addEventListener("click", addKeyword);
-        });
-}
-
-function swapToCreateForm() {
-    document.getElementById("edit-template-keywords").style.display = "none";
-    document.getElementById("create-template-keywords").style.display = "block";
-    swapToCreateFormButton.style.display = "none";
-    swapToKeywordFormButton.style.display = "inline-block";
-}
-
-function swapToKeywordForm() {
-    document.getElementById("edit-template-keywords").style.display = "block";
-    document.getElementById("create-template-keywords").style.display = "none";
-    swapToCreateFormButton.style.display = "inline-block";
-    swapToKeywordFormButton.style.display = "none";
-}
-
 emailBody.addEventListener("input", updateSavedKeywords);
-createTemplateButton.addEventListener("click", createTemplate);
-swapToCreateKeywordButton.addEventListener("click", swapToCreateForm);
-swapToEditTemplateButton.addEventListener("click", swapToKeywordForm);
-
-
-loadRightFormContent();
+// createTemplateButton.addEventListener("click", createTemplate);
+setKeywordTypes();

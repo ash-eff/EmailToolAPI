@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template Builder</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="container"> 
+        <div class="nav-bar">
+            <div class="menu-container">
+                <ul>
+                    <li>
+                        <button class="build-template-button" id="build-template-button" type="button">Build A Template</button>
+                    </li>
+                    <li>
+                        <button class="edit-templates-button" id="edit-templates-button" type="button">Edit Templates</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="content">
+            <div class="upper-content-container">
+                <form class="left-form">
+                    <ul class="flex-area">
+                        <li>
+                            <label for="template-title">Email Template Title</label>
+                            <input type="text" id="template-title" name="template-title" placeholder="Enter Template Title">
+                        </li>
+                        <li class="email-body-container">
+                            <label for="email-body">Email Template Body</label>
+                            <textarea class="email-body" id="email-body" placeholder="Enter Email Body"></textarea>
+                        </li>
+                    </ul>
+                </form>
+                <div class="right-form" id="right-form">
+                    <div id="edit-keyword-form" class="visible">
+                        <ul class="flex-area">
+                            <li class="keyword-list-container">
+                                <label for="keywords-list">Saved Keywords</label>
+                                <select name="keywords-list" id="keywords-list">
+                                    
+                                </select>
+                            </li>
+                            <li>
+                                <label for="keyword-name">Keyword Name</label>
+                                <input type="text" id="keyword-name" name="keyword-name" readonly>
+                            </li>
+                            <li>
+                                <label for="keyword-types">Keyword Type</label>
+                                <select name="keyword-types" id="keyword-types">
+
+                                </select>
+                            </li>
+                            <ul class="keyword-buttons">
+                                <li>
+                                    <button class="update-keyword-button" id="update-keyword-button" type="button">Update Keyword</button>
+                                </li>
+                                <li>
+                                    <button class="remove-keyword-button" id="remove-keyword-button" type="button">Remove Keyword</button>
+                                </li>
+                            </ul>
+
+                        </ul>
+                    </div>
+                    <div id="create-keyword-form" class="hidden">
+                        <ul class="flex-area">
+                            <li>
+                                <label for="new-keyword-name">New Keyword Name</label>
+                                <input type="text" id="new-keyword-name" name="new-keyword-name">
+                            </li>
+                            <li>
+                                <label for="new-keyword-value">New Keyword Value</label>
+                                <input type="text" id="new-keyword-value" name="new-keyword-value">
+                            </li>
+                            <ul class="keyword-buttons">
+                                <li>
+                                    <button class="add-keyword-button" id="add-keyword-button" type="button">Add Keyword</button>
+                                </li>
+                            </ul>
+                
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="lower-content-container">
+
+            </div>
+        </div>
+    </div>
+    <script src="../javascript.js"></script>
+</body>
+</html>

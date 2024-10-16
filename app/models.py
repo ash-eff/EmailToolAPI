@@ -1,11 +1,10 @@
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
-from datetime import datetime
 from enum import Enum
 
 class KeywordType(str, Enum):
-    INPUT = "input-field"
-    DROPDOWN = "dropdown-menu"
+    INPUT = "Input Field"
+    DROPDOWN = "Dropdown Menu"
 
 class ProjectBase(BaseModel):
     name: str

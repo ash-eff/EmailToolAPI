@@ -1,43 +1,57 @@
 body {
     font: normal 20px/1.5 "Fira Sans", "Helvetica Neue", sans-serif;
-    background: #485764;
     color: #E9ECEF;
-    padding: 150px 0;
-    height: 100vh;
     margin: 0;
 }
 
-input, .email-body,
-.keyword-list {
-    border: 2px solid #E9ECEF;
-    background-color: #566572;
-    color: #E9ECEF;
-    font-size: 20px;
-    height: 40px;
-    outline: none;
-}
-
-label {
-    color: #E9ECEF;
-}
-
 .container {
-    width: 80%;
-    max-width: 1200px;
-    min-height: 600px;
-    margin: 0 auto;
-    padding: 0;
+    display: grid; 
+    grid-template-columns: 0.4fr 1.6fr 1fr; 
+    grid-template-rows: 0.5fr 1.5fr 1fr; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+      "nav-bar content content"
+      "nav-bar content content"
+      "nav-bar content content"; 
+      height: 100vh;
+      width: 100vw;
+  }
+
+  .nav-bar { 
+      grid-area: nav-bar; 
+      background-color: #282828;
+      padding: 20px;
+      display: flex;
+        justify-content: center;
+        align-items: start;
+  }
+  .content { 
+      grid-area: content; 
+      background-color: #3f3f3f;
+      display: flex;
+        justify-content: center;
+        align-items: center;
+  }
+
+.hidden {
+    display: none;
+}
+
+.visible {
     display: flex;
+    flex-grow: 1;
     flex-direction: column;
 }
 
-.container * {
-    box-sizing: border-box;
-}
-
-.flex-container-upper {
+.upper-content-container {
     display: flex;
-    flex-grow: 1;
+    justify-content: center;
+    align-items: stretch;
+    height: 80%;
+    width: 80%;
+    background-color: #282828;
+    border: 2px solid #E9ECEF;
+    border-radius: 5px;
 }
 
 .left-form {
@@ -58,7 +72,7 @@ label {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    margin: 0;
+    margin: 20px;
     padding: 0;
 }
 
@@ -74,6 +88,7 @@ label {
     gap: 5px;
     margin: 0;
     padding: 0;
+    justify-content: end;
 }
 
 .keyword-buttons button {
@@ -81,12 +96,57 @@ label {
     margin: 0;
 }
 
-.flex-container-lower {
+button:disabled,
+button:disabled:hover {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    border: 2px solid #999;
+}
+
+
+input, select {
+    border: 2px solid #E9ECEF;
+    background-color: #444b4a;
+    color: #E9ECEF;
+    font-size: 20px;
+    height: 40px;
+    outline: none;
+}
+
+label {
+    color: #E9ECEF;
+}
+
+.email-body-container {
+    flex-grow: 1;
+    height: 100%;
+}
+
+.email-body {
+    flex-grow: 1;
+    padding: 10px;
+    border: 2px solid #E9ECEF;
+    background-color: #444b4a;
+    color: #E9ECEF;
+    font-size: 20px;
+}
+
+.keyword-list-container {
+    display: flex;
+}
+
+.keyword-list li:hover {
+    background-color: #444b4a;
+}
+
+
+.lower-content-container {
     display: flex;
     flex-direction: row;
 }
 
-.flex-container-lower ul {
+.lower-content-container ul {
     display: flex;
     gap: 10px;
     list-style-type: none;
@@ -95,19 +155,20 @@ label {
     padding: 0;
 }
 
-.flex-container-lower ul li {
+.lower-content-container ul li {
     display: flex;
 }
 
 .create-template-button, 
 .update-keyword-button,
 .remove-keyword-button,
-.create-keyword-button,
-.edit-keyword-button {
+.add-keyword-button,
+.swap-to-create-keyword-button,
+.swap-to-edit-template-button {
     padding: 8px 16px;
-    border: 2px solid #E9ECEF;
-    background: #0F6082;
-    color: #E9ECEF;
+    border: 2px solid #121212;
+    background: #09b6aa;
+    color: #121212;
     font-size:16px;
     text-transform: uppercase;
     letter-spacing: .09em;
@@ -117,11 +178,12 @@ label {
 .create-template-button:hover,
 .update-keyword-button:hover,
 .remove-keyword-button:hover,
-.create-keyword-button:hover,
-.edit-keyword-button:hover {
-    background: #0F6082;
-    border: 2px solid #0F171C;
-    color: #0F171C;
+.add-keyword-button:hover,
+.swap-to-create-keyword-button:hover,
+.swap-to-edit-template-button:hover {
+    background: #63c7bc;
+    border: 2px solid #575757;
+    color: #121212;
 }
 
 .remove-keyword-button {
@@ -130,44 +192,4 @@ label {
 
 .remove-keyword-button:hover {
     background: #882D31;
-}
-
-.email-body-container {
-    flex-grow: 1;
-}
-
-.email-body {
-    flex-grow: 1;
-    padding: 10px;
-}
-
-.keyword-list-container {
-    display: flex;
-    flex-grow: 1;
-}
-
-.keyword-list {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow-y: auto;
-    margin: 0;
-    padding: 1px;
-}
-
-.keyword-list li {
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: center;
-    border: 2px solid #E9ECEF;
-    background-color: #566572;
-    cursor: pointer;
-    padding-left: 5px;
-    margin: 2px;
-    height: 35px;
-}
-
-.keyword-list li:hover {
-    background-color: #485764;
 }

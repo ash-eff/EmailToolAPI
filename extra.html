@@ -1,0 +1,69 @@
+<form class="left-form">
+    <ul class="flex-area">
+        <li>
+            <label for="template-title">Email Template Title</label>
+            <input type="text" id="template-title" name="template-title" placeholder="Enter Template Title">
+        </li>
+        <li class="email-body-container">
+            <label for="email-body">Email Template Body</label>
+            <textarea class="email-body" id="email-body" placeholder="Enter Email Body"></textarea>
+        </li>
+    </ul>
+</form>
+
+<div class="right-form" id="right-form">
+    <div id="edit-keyword-form" class="visible">
+        <ul class="flex-area">
+            <li>
+                <label for="keyword-name">Keyword Name</label>
+                <input type="text" id="keyword-name" name="keyword-name" readonly>
+            </li>
+            <li>
+                <label for="keyword-value">Keyword Value</label>
+                <input type="text" id="keyword-value" name="keyword-value">
+            </li>
+            <li class="keyword-list-container">
+                <label for="saved-keywords">Saved Keywords</label>
+                <ul class="keyword-list" id="saved-keywords-list"></ul>
+            </li>
+            <ul class="keyword-buttons">
+                <li>
+                    <button class="update-keyword-button" id="update-keyword-button" type="button">Update Keyword</button>
+                </li>
+                <li>
+                    <button class="remove-keyword-button" id="remove-keyword-button" type="button">Remove Keyword</button>
+                </li>
+            </ul>
+        </ul>
+    </div>
+    <div id="create-keyword-form" class="hidden">
+        <ul class="flex-area">
+            <li>
+                <label for="new-keyword-name">New Keyword Name</label>
+                <input type="text" id="new-keyword-name" name="new-keyword-name">
+            </li>
+            <li>
+                <label for="new-keyword-value">New Keyword Value</label>
+                <input type="text" id="new-keyword-value" name="new-keyword-value">
+            </li>
+            <ul class="keyword-buttons">
+                <li>
+                    <button class="add-keyword-button" id="add-keyword-button" type="button">Add Keyword</button>
+                </li>
+            </ul>
+
+        </ul>
+    </div>
+</div>
+
+<ul>
+    <li>
+        <button class="create-template-button" id="create-template-button" type="button">Create Template</button>
+    </li>
+    <li>
+        <button class="swap-to-create-keyword-button" id="swap-to-create-keyword-button" type="button">Create A Keyword</button>
+    </li>
+    <li>
+        <button class="swap-to-edit-template-button" id="swap-to-edit-template-button" type="button">Edit Template Keywords</button>
+    </li>
+</ul>
