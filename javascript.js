@@ -1,18 +1,30 @@
 const emailBody = document.getElementById("email-body");
+const highlightedArea = document.getElementById('highlighted-text');
 
-const keywordsList = document.getElementById("keywords-list");
+const keywordsSavedList = document.getElementById("keywords-saved");
 const keywordName = document.getElementById("keyword-name");
 const keywordTypes = document.getElementById("keyword-types");
+const keywordOptions = document.getElementById("keyword-options");
+const keywordOptionsContainer = document.getElementById("keyword-options-container");
+const templateTitle = document.getElementById("template-title");
 
-const createTemplateButton = document.getElementById("create-template-button");
-const updateKeywordButton = document.getElementById("update-keyword-button");
-const removeKeywordButton = document.getElementById("remove-keyword-button");
+const saveTemplateButton = document.getElementById("save-template-button");
+
+class Keyword {
+    constructor(name, type, options = [], description = "") {
+        this.name = name;
+        this.type = type;
+        this.options = options;
+        this.description = description;
+    }
+}
 
 const keywords = new Map();
+const removedKeywords = new Map();
 
 async function setKeywordTypes() {
     try {
-        const response = await fetch("http://localhost:8000/keyword_types");
+        const response = await fetch("http://localhost:8000/keyword_types/");
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -26,81 +38,208 @@ async function setKeywordTypes() {
             const option = document.createElement("option");
             option.textContent = type;
             keywordTypes.appendChild(option);
+
+            option.addEventListener("click", () => {
+                handleKeywordTypeClick(type);
+            });
         });
     } catch (error) {
         console.error('Error fetching types:', error);
     }
 }
 
-function updateSavedKeywords() {
-    keywordsList.innerHTML = '';
+function updateKeywordsSavedList() {
+    keywordsSavedList.innerHTML = '';
 
     const emailContent = emailBody.value;
+    const newKeyword = new Keyword();
 
-    const regex = /\{([^}]+)\}/g;
+    const regex = /\{([^{}]*?)\}/g;
     let matches;
     let currentKeywords = new Set();
-    
+
     while ((matches = regex.exec(emailContent)) !== null) {
         const keyword = matches[1].trim();
         currentKeywords.add(keyword);
-        if (!keywords.has(keyword)) {
-            keywords.set(keyword, undefined);
-        }
-    }
 
-    for (let keyword of keywords.keys()) {
-        if (!currentKeywords.has(keyword)) {
-            keywords.delete(keyword);
+        if (!keywords.has(keyword)) {
+            if(removedKeywords.has(keyword)) {
+                newKeyword.name = keyword;
+                newKeyword.type = removedKeywords.get(keyword).type;
+                newKeyword.options = removedKeywords.get(keyword).options;
+                keywords.set(keyword, newKeyword);
+                removedKeywords.delete(keyword);
+            }
+            else {
+                newKeyword.name = keyword;
+                newKeyword.type = keywordTypes[0].value;
+                keywords.set(keyword, newKeyword);
+            }
         }
     }
 
     keywords.forEach((value, keyword) => {
         const option = document.createElement("option");
         option.textContent = keyword;
+        option.value = keyword
     
         option.addEventListener("click", () => {
-            handleKeywordClick(keyword);
+            handleSavedKeywordClick(keyword);
         });
     
-        keywordsList.appendChild(option);
+        keywordsSavedList.appendChild(option);
     });
-}
 
-function handleKeywordClick(keyword) {
-    if(keywords.has(keyword)) {
-        keywordName.value = keyword;
-        if(keywords.get(keyword) === undefined) {
-            keywordValue.placeholder = "Enter a value for this keyword";
-            keywordValue.value = "";
-        }
-        else{
-            keywordValue.value = keywords.get(keyword);
-            keywordValue.placeholder = "";
-        }
+    const keywordsToRemove = [...keywords.keys()].filter(keyword => !currentKeywords.has(keyword));
+    for (let keyword of keywordsToRemove) {
+        removedKeywords.set(keyword, keywords.get(keyword));
+        keywords.delete(keyword);
+        resetKeywordForm();
+        hideKeywordTypes();
+    }
+
+    let selected = keywordsSavedList.selectedIndex = keywordsSavedList.length - 1;
+    if (selected >= 0) {
+        updateKeywordName(keywordsSavedList[selected].value);
+        updateKeywordType(keywords.get(keywordsSavedList[selected].value).type);
+        updateKeywordOptions(keywords.get(keywordsSavedList[selected].value).options);
+        hideKeywordTypes();
+    }
+    else {
+        resetKeywordForm();
     }
 }
 
-function updateKeywordValue() {
-    const keyword = keywordName.value;
-    const value = keywordValue.value;
-
-    keywords.set(keyword, value);
-    updateSavedKeywords();
+function updateKeywordOptionsList() {
+    let currentKeyword = keywords.get(keywordName.value);
+    let options = keywordOptions.value.split(/,|\n/);
+    currentKeyword.options = options;
 }
 
-function updateKeyword() {
-    console.log("Updating keyword...");
+function clearKeywordOptions() {
+    keywordOptions.value = "";
 }
 
-function removeKeyword() {
-    console.log("Removing keyword...");
+function updateKeywordName(name) {
+    keywordName.value = name;
 }
 
-function createTemplate() { 
-    console.log("Creating template...");
+function updateKeywordType(type) {
+    keywordTypes.value = type;
 }
 
-emailBody.addEventListener("input", updateSavedKeywords);
-// createTemplateButton.addEventListener("click", createTemplate);
+function updateKeywordOptions(options) {
+    keywordOptions.value = options;
+}
+
+function resetKeywordForm() {
+    updateKeywordName("");
+    updateKeywordType("Input Field");
+    clearKeywordOptions();
+    hideKeywordTypes();
+}
+
+function handleSavedKeywordClick(keyword) {
+    updateKeywordName(keyword);
+    updateKeywordType(keywords.get(keyword).type);
+    updateKeywordOptions(keywords.get(keyword).options);
+    hideKeywordTypes();
+}
+
+function handleKeywordTypeClick(type) {
+    hideKeywordTypes();
+    let keyword = keywords.get(keywordName.value);
+    keyword.type = type;
+}
+
+function hideKeywordTypes() {
+    if (keywordTypes.value === "Dropdown Menu") {
+        keywordOptionsContainer.classList.remove("hidden");
+        keywordOptionsContainer.classList.add("visible");
+    }
+    else {
+        keywordOptionsContainer.classList.remove("visible");
+        keywordOptionsContainer.classList.add("hidden");
+    }
+}
+
+async function saveTemplate() {
+    // if (templateTitle.value === "") {
+    //     alert("Please enter a title for the template.");
+    //     return;
+    // }
+
+    // if (emailBody.value === "") {
+    //     alert("Please enter a body for the email.");
+    //     return;
+    // }
+
+    // if (keywords.size === 0) {
+    //     alert("Please add keywords to the template.");
+    //     return;
+    // }
+
+    try {
+        let keywordList = [];
+
+        for (let keyword of keywords.values()) {
+            if (keyword.name !== "") {
+                const newKeyword = {
+                    name: keyword.name,
+                    type: keyword.type,
+                    options: keyword.options
+                };
+
+                const response = await fetch("http://localhost:8000/keywords/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newKeyword)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to save keyword: ${keyword.name}`);
+                }
+
+                const data = await response.json();
+                keywordList.push(data);
+                console.log(keywordList)
+            }
+        }
+
+        const template = {
+            name: templateTitle.value,
+            body: emailBody.value,
+            keywords: keywordList
+        };
+
+        console.log("Template:", template); 
+
+        const templateResponse = await fetch("http://localhost:8000/email_templates/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(template)
+        });
+
+        if (!templateResponse.ok) {
+            throw new Error("Failed to save template");
+        }
+
+        const templateData = await templateResponse.json();
+        console.log("Template saved:", templateData);
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+keywordTypes?.addEventListener("input", () => hideKeywordTypes());
+emailBody?.addEventListener("input", () => updateKeywordsSavedList());
+keywordOptions?.addEventListener("input", () => updateKeywordOptionsList());
+saveTemplateButton?.addEventListener("click", () => saveTemplate());
+
 setKeywordTypes();

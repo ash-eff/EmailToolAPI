@@ -46,8 +46,7 @@ def create_keyword(keyword: KeyWordCreate) -> KeyWord:
         id=new_keyword_id, 
         name=keyword.name, 
         type=keyword.type, 
-        options=keyword.options, 
-        description=keyword.description
+        options=keyword.options
         )
     keywords_db.append(new_keyword)
     return new_keyword

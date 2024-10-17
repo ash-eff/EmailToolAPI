@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from typing import List, Optional
 from enum import Enum
 
@@ -36,10 +36,13 @@ class KeyWordBase(BaseModel):
     name: str
     type: KeywordType
     options: Optional[List[str]] = []
-    description: Optional[str] = None
 
 class KeyWordCreate(KeyWordBase):
-    pass
+    keyword_link: str = ""
+
+    @field_validator("keyword_link", mode="before")
+    def set_keyword_link(cls, v, values):
+        return "{" + values["name"] + "}"
 
 class KeyWord(KeyWordBase):
     id: int
