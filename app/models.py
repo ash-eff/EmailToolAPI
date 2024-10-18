@@ -54,6 +54,7 @@ class EmailTemplateBase(BaseModel):
     name: str
     body: str
     keywords: Optional[List[KeyWord]] = []
+    project: Project
 
 class EmailTemplateCreate(EmailTemplateBase):
     pass

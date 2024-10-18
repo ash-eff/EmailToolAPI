@@ -42,11 +42,14 @@ def read_users() -> List[User]:
 
 def create_keyword(keyword: KeyWordCreate) -> KeyWord:
     new_keyword_id = len(keywords_db) + 1
+
+    capitalized_options = [option.title() for option in keyword.options]
+
     new_keyword = KeyWord(
         id=new_keyword_id, 
-        name=keyword.name, 
+        name=keyword.name.capitalize(), 
         type=keyword.type, 
-        options=keyword.options
+        options=capitalized_options
         )
     keywords_db.append(new_keyword)
     return new_keyword
@@ -69,7 +72,8 @@ def create_email_template(email_template: EmailTemplateCreate) -> EmailTemplate:
         id = email_template_id, 
         name=email_template.name, 
         body=email_template.body, 
-        keywords=email_template.keywords
+        keywords=email_template.keywords,
+        project=email_template.project
         )
     email_templates_db.append(new_email_template)
     return new_email_template

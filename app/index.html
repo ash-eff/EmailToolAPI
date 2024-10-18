@@ -12,16 +12,44 @@
             <div class="menu-container">
                 <ul>
                     <li>
-                        <button class="build-template-button" id="build-template-button" type="button">Build A Template</button>
+                        <label class="underline-white" for="project-options">Current Project</label>
+                        <select class="project-options" name="project-options" id="project-options"></select>
                     </li>
                     <li>
-                        <button class="edit-templates-button" id="edit-templates-button" type="button">Edit Templates</button>
+                        <button class="template-view-button" id="template-view-button" type="button">Email Templates</button>
+                    </li>
+                    <li>
+                        <button class="template-build-button" id="template-build-button" type="button">Build A Template</button>
                     </li>
                 </ul>
             </div>
         </div>
         <div class="content">
-            <div class="upper-content-container">
+            <div id="email-templates-container" class="visible">
+                <div class="flex-area">
+                    <div id="template-buttons-container" class="visible">
+                        <div>
+                            <h1 id="email-template-header" class="underline-white center-item">Select a project.</h1>
+                        </div>
+                        <div id="template-buttons" class="hidden">
+                        </div>
+                        <div id="template-warning-text" class="center-item center-item-veritcal hidden">
+                            No templates available.
+                        </div>
+                    </div>  
+                    <div id="template-container" class="hidden center-item">
+                        <div id="email-form-container" class="email-form-container">
+                            <button class="email-generate-button" id="email-generate-button" type="button">Generate Email</button>
+                        </div>
+                        <div class="email-field-container">
+                            <textarea class="email-field" id="email-field"></textarea>
+                            <button class="email-copy-button" id="email-copy-button" type="button">Copy Email</button>
+                            <button class="email-back-button" id="email-back-button" type="button">Back To Email Templates</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="template-build-container" class="hidden">
                 <div class="left-form">
                     <div class="flex-area">
                         <li>
@@ -53,13 +81,10 @@
                             <textarea id="keyword-options" name="keyword-options" placeholder="Dropdown options. Separate with a comma or enter to add on new line"></textarea>
                         </li>
                         <li id="save-button">
-                            <button class="save-template-button" id="save-template-button" type="button">Save Template</button>
+                            <button class="template-save-button" id="template-save-button" type="button">Save Template</button>
                         </li>
                     </div>
                 </div>
-            </div>
-            <div class="lower-content-container">
-
             </div>
         </div>
     </div>

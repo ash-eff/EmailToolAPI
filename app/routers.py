@@ -9,14 +9,14 @@ router = APIRouter()
 def create_project(project: ProjectCreate):
     return crud.create_project(project)
 
-@router.get("/projects/{project_id}", response_model=Project)
+@router.get("/get_projects/{project_id}", response_model=Project)
 def read_project(project_id: int):
     project = crud.get_project(project_id)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
     return project
 
-@router.get("/projects/", response_model=List[Project])
+@router.get("/get_projects/", response_model=List[Project])
 def read_projects():
     return crud.get_projects()
 
