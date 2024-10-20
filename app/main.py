@@ -27,9 +27,18 @@ app.include_router(router)
 
 def initialize_projects():
     initial_projects = [
-        {"name": "Arizona"},
-        {"name": "Arkansas"},
-        {"name": "Connecticut"},
+        {
+            "name": "Arizona",
+            "signature_block": "AZ Signature Block"
+        },
+        {
+            "name": "Arkansas",
+            "signature_block": "AR Signature Block"
+        },
+        {
+            "name": "Connecticut",
+            "signature_block": "CT Signature Block"
+        },
     ]
     for project_data in initial_projects:
         print(project_data)

@@ -14,6 +14,7 @@ const templateButtons = document.getElementById("template-buttons");
 const emailFormContainer = document.getElementById("email-form-container");
 const templateButtonsContainer = document.getElementById("template-buttons-container");
 const templateContainer = document.getElementById("template-container");
+const emailField = document.getElementById("email-field");
 
 const emailTemplatesView = document.getElementById("email-templates-container");
 const templateBuildView = document.getElementById("template-build-container");
@@ -35,6 +36,7 @@ class Keyword {
 
 let currentView = emailTemplatesView;
 let currentProject = null;
+let currentEmailTemplate = null;
 const keywords = new Map();
 const removedKeywords = new Map();
 const emailTemplates = [];
@@ -161,8 +163,9 @@ function updateKeywordsSavedList() {
 
 function updateKeywordOptionsList() {
     let currentKeyword = keywords.get(keywordName.value);
-    let options = keywordOptions.value.split(/,|\n/);
-    currentKeyword.options = options;
+    let options = keywordOptions.value.split(/,|\n/).map(option => option.trim());
+    options = options.filter(option => option !== "");
+    currentKeyword.options = options; 
 }
 
 function clearKeywordOptions() {
@@ -276,8 +279,9 @@ function toggleEmailTemplateView(turnOn) {
 function handleEmailButtonClick(template) {
     toggleEmailTemplateView(true);
     clearEmailForm();
-    if (template.keywords.length > 0) {
-        for (let keyword of template.keywords) {
+    currentEmailTemplate = template;
+    if (currentEmailTemplate.keywords.length > 0) {
+        for (let keyword of currentEmailTemplate.keywords) {
             console.log("Keyword:", keyword);
             const li = document.createElement("li");
 
@@ -317,7 +321,6 @@ function handleEmailButtonClick(template) {
 }
 
 function clearEmailForm() {
-    // remove all chidren from emailFormContainer except for emailGenerateButton
     while (emailFormContainer.children.length > 1) {
         emailFormContainer.removeChild(emailFormContainer.firstChild);
     }
@@ -332,6 +335,12 @@ function hideKeywordTypes() {
         keywordOptionsContainer.classList.remove("visible");
         keywordOptionsContainer.classList.add("hidden");
     }
+}
+
+function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function (txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
 }
 
 async function saveTemplate() {
@@ -378,9 +387,13 @@ async function saveTemplate() {
             }
         }
 
+        let processedEmailBody = emailBody.value.replace(/\{([^\}]+)\}/g, (match, keyword) => {
+            return `{${toTitleCase(keyword)}}`;
+        });
+        
         const template = {
             name: templateTitle.value,
-            body: emailBody.value,
+            body: processedEmailBody,
             keywords: keywordList,
             project: currentProject
         };
@@ -424,8 +437,29 @@ function setCurrentView(view) {
 }
 
 function generateEmail() {
-    //generate email
+    const formElements = emailFormContainer.children;
+    
+    let emailBodyText = currentEmailTemplate.body;
+
+    for (let i = 0; i < formElements.length - 1; i++) {
+        const label = formElements[i].querySelector('label');
+        const input = formElements[i].querySelector('input, select, textarea');
+
+        if (label && input) {
+            const keyword = label.textContent.trim();
+            const value = input.value;
+
+            const regex = new RegExp(`{${keyword}}`, 'g');
+            emailBodyText = emailBodyText.replace(regex, value);
+        }
+    }
+
+    //add signature to end of email
+    emailBodyText += "\n" + currentProject.signature_block;
+
+    emailField.value = emailBodyText;
 }
+
 
 keywordTypes?.addEventListener("input", () => hideKeywordTypes());
 emailBody?.addEventListener("input", () => updateKeywordsSavedList());

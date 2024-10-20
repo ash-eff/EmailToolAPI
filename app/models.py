@@ -8,6 +8,7 @@ class KeywordType(str, Enum):
 
 class ProjectBase(BaseModel):
     name: str
+    signature_block: str
 
 class ProjectCreate(ProjectBase):
     pass
@@ -38,11 +39,7 @@ class KeyWordBase(BaseModel):
     options: Optional[List[str]] = []
 
 class KeyWordCreate(KeyWordBase):
-    keyword_link: str = ""
-
-    @field_validator("keyword_link", mode="before")
-    def set_keyword_link(cls, v, values):
-        return "{" + values["name"] + "}"
+    pass
 
 class KeyWord(KeyWordBase):
     id: int

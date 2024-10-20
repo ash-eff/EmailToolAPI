@@ -7,7 +7,12 @@ keywords_db = []
 email_templates_db = []
 
 def create_project(project: ProjectCreate) -> Project:
-    new_project = Project(id=len(projects_db) + 1, name=project.name)
+    new_project_id = len(projects_db) + 1
+    new_project = Project(
+        id=new_project_id,
+        name=project.name, 
+        signature_block=project.signature_block
+    )
     projects_db.append(new_project)
     return new_project
 
@@ -47,7 +52,7 @@ def create_keyword(keyword: KeyWordCreate) -> KeyWord:
 
     new_keyword = KeyWord(
         id=new_keyword_id, 
-        name=keyword.name.capitalize(), 
+        name=keyword.name.title(), 
         type=keyword.type, 
         options=capitalized_options
         )
