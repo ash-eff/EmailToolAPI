@@ -34,6 +34,7 @@ export function updateKeywordsSavedList() {
 
         if (!keywords.has(keyword)) {
             if(removedKeywords.has(keyword)) {
+                console.log("Updating: " + keyword);
                 newKeyword.name = keyword;
                 newKeyword.type = removedKeywords.get(keyword).type;
                 newKeyword.options = removedKeywords.get(keyword).options;
@@ -41,6 +42,7 @@ export function updateKeywordsSavedList() {
                 removedKeywords.delete(keyword);
             }
             else {
+                console.log("Adding: " + keyword);
                 newKeyword.name = keyword;
                 newKeyword.type = keywordTypes[0].value;
                 keywords.set(keyword, newKeyword);
@@ -78,6 +80,13 @@ export function updateKeywordsSavedList() {
     else {
         resetKeywordForm();
     }
+}
+
+export function populateSavedKeywords(originalKeywords) {
+    originalKeywords.forEach(keyword => {
+        keywords.set(keyword.name, keyword);
+    });
+    updateKeywordsSavedList(); 
 }
 
 export function updateKeywordOptionsList() {

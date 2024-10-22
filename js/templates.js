@@ -1,4 +1,6 @@
-import { keywords } from "./keywords.js";
+import { keywords, populateSavedKeywords, updateKeywordOptionsList, setKeywordTypes } from "./keywords.js";
+import { currentProject } from "./projects.js";
+import { setCurrentView } from "./main.js";
 
 import { templateButtons,
     templateWarningText,
@@ -8,47 +10,39 @@ import { templateButtons,
     emailFormContainer,
     emailGenerateButton,
     templateButtonsContainer,
-    templateContainer
+    templateContainer,
+    templateEditView
 } from "./dom.js";
 
 export let currentEmailTemplate = null;
 export const emailTemplates = [];
 
-export async function getEmailTemplates(projectId) {
+export async function getEmailTemplates(projectId, isEditing = false) {
     toggleEmailTemplateView(false);
-    try {
-        const response = await fetch(`http://localhost:8000/get_email_templates/`);
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const templates = await response.json();
-
-        emailTemplates.length = 0;
-
-        for (let template of templates) {
-            if (template.project.id === projectId) {
-                emailTemplates.push(template);
+    return new Promise(async (resolve, reject) => {
+        try {
+            const response = await fetch(`http://localhost:8000/get_email_templates/`);
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        }
-    } catch (error) {
-        console.error('Error fetching templates:', error);
-    }
+    
+            const templates = await response.json();
+    
+            emailTemplates.length = 0;
+    
+            for (let template of templates) {
+                if (template.project.id === projectId) {
+                    emailTemplates.push(template);
+                }
+            }
 
-    if (emailTemplates.length === 0) {
-        templateButtons.classList.remove("visible");
-        templateButtons.classList.add("hidden");
-        templateWarningText.classList.remove("hidden");
-        templateWarningText.classList.add("visible");
-    }
-    else {
-        templateButtons.classList.remove("hidden");
-        templateButtons.classList.add("visible");
-        templateWarningText.classList.remove("visible");
-        templateWarningText.classList.add("hidden");
-        loadEmailButtons();
-    }
+            resolve();
+        } catch (error) {
+            reject(`Error fetching templates: ${error}`);
+        }
+    });
 }
 
 export async function saveTemplate(toTitleCase) {
@@ -126,6 +120,14 @@ export async function saveTemplate(toTitleCase) {
 
 export function generateEmail() {
     const formElements = emailFormContainer.children;
+
+    for (let i = 0; i < formElements.length - 1; i++) {
+        const input = formElements[i].querySelector('input, select, textarea');
+        if (input.value === "") {
+            alert("Please fill out all fields before generating the email.");
+            return;
+        }
+    }
     
     let emailBodyText = currentEmailTemplate.body;
 
@@ -147,6 +149,7 @@ export function generateEmail() {
 }
 
 function clearEmailForm() {
+    emailField.value = "";
     while (emailFormContainer.children.length > 1) {
         emailFormContainer.removeChild(emailFormContainer.firstChild);
     }
@@ -195,6 +198,16 @@ export function handleEmailButtonClick(template) {
     }
 }
 
+export function handleEditEmailButtonClick(template) {
+    setCurrentView(templateEditView);
+    currentEmailTemplate = template;
+    templateTitle.value = currentEmailTemplate.name;
+    emailBody.value = currentEmailTemplate.body;
+    setKeywordTypes();
+    populateSavedKeywords(currentEmailTemplate.keywords);
+    updateKeywordOptionsList();
+}
+
 export function resetTemplateForm() {
     templateTitle.value = "";
     emailBody.value = "";
@@ -214,16 +227,41 @@ function toggleEmailTemplateView(turnOn) {
         templateContainer.classList.remove("visible");
         templateContainer.classList.add("hidden");
     }
-
 }
 
-function loadEmailButtons() {
+export function toggleTemplateButtons() {
+    if (emailTemplates.length === 0) {
+        templateButtons.classList.remove("visible");
+        templateButtons.classList.add("hidden");
+        templateWarningText.classList.remove("hidden");
+        templateWarningText.classList.add("visible");
+    }
+    else {
+        templateButtons.classList.remove("hidden");
+        templateButtons.classList.add("visible");
+        templateWarningText.classList.remove("visible");
+        templateWarningText.classList.add("hidden");
+    }
+}
+
+export function loadEmailButtons() {
     templateButtons.innerHTML = "";
     for (let template of emailTemplates) {
         const button = document.createElement("button");
         button.classList.add("grid-button");
         button.textContent = template.name;
         button.addEventListener("click", () => handleEmailButtonClick(template));
+        templateButtons.appendChild(button);
+    }
+}
+
+export function loadEditEmailButtons() {
+    templateButtons.innerHTML = "";
+    for (let template of emailTemplates) {
+        const button = document.createElement("button");
+        button.classList.add("grid-edit-button");
+        button.textContent = template.name;
+        button.addEventListener("click", () => handleEditEmailButtonClick(template));
         templateButtons.appendChild(button);
     }
 }

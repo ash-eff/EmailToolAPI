@@ -91,3 +91,13 @@ def get_email_template(email_template_id: int) -> Optional[EmailTemplate]:
 
 def get_email_templates() -> List[EmailTemplate]:
     return email_templates_db
+
+def update_email_template(email_template_id: int, updated_template: EmailTemplateCreate) -> Optional[EmailTemplate]:
+    for index, email_template in enumerate(email_templates_db):
+        if email_template.id == email_template_id:
+            email_templates_db[index].name = updated_template.name
+            email_templates_db[index].body = updated_template.body
+            email_templates_db[index].keywords = updated_template.keywords
+            email_templates_db[index].project = updated_template.project
+            return email_templates_db[index]
+    return None

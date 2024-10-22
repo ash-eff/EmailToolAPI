@@ -1,4 +1,4 @@
-import { getEmailTemplates } from './templates.js';
+import { getEmailTemplates, toggleTemplateButtons, loadEmailButtons } from './templates.js';
 
 import { projectOptions,
     emailTemplateHeader,
@@ -44,5 +44,13 @@ async function handleProjectClick(project) {
     emailTemplateHeader.textContent = `Email Templates for ${project.name}`;
     templateSaveButton.disabled = false;
     templateSaveButton.textContent = `Save Template for ${project.name}`;
-    getEmailTemplates(project.id);
+    getEmailTemplates(currentProject.id)
+    .then(() => {
+        toggleTemplateButtons();
+        loadEmailButtons();
+    })
+    .catch((error) => {
+        console.error('Error fetching templates:', error);
+        alert(`Error: ${error}`);
+    });
 }

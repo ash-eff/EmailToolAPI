@@ -21,13 +21,16 @@
                     <li>
                         <button class="template-build-button" id="template-build-button" type="button">Build A Template</button>
                     </li>
+                    <li>
+                        <button class="template-edit-button" id="template-edit-button" type="button">Edit A Template</button>
+                    </li>
                 </ul>
             </div>
         </div>
         <div class="content">
             <div id="email-templates-container" class="visible">
                 <div class="flex-area">
-                    <div id="template-buttons-container" class="visible">
+                    <div id="template-buttons-container" class="hidden">
                         <div>
                             <h1 id="email-template-header" class="underline-white center-item">Select a project.</h1>
                         </div>
@@ -82,6 +85,44 @@
                         </li>
                         <li id="save-button">
                             <button class="template-save-button" id="template-save-button" type="button">Save Template</button>
+                        </li>
+                    </div>
+                </div>
+            </div>
+            <div id="template-edit-container" class="hidden">
+                <div class="left-form">
+                    <div class="flex-area">
+                        <li>
+                            <label for="template-title">Email Template Title</label>
+                            <input type="text" id="template-title" name="template-title" placeholder="Enter Template Title">
+                        </li>
+                        <li class="email-body-container">
+                            <label for="email-body">Email Template Body</label>
+                            <textarea class="email-body" id="email-body" placeholder="Enter Email Body"></textarea>
+                        </li>
+                    </div>
+                </div>
+                <div class="right-form">
+                    <div class="flex-area">
+                        <li>
+                            <label for="keywords-saved">Saved Keywords</label>
+                            <select name="keywords-saved" id="keywords-saved"></select>
+                        </li>
+                        <li>
+                            <label for="keyword-name">Keyword Name</label>
+                            <input type="text" id="keyword-name" name="keyword-name" readonly>
+                        </li>
+                        <li>
+                            <label for="keyword-types">Keyword Type</label>
+                            <select name="keyword-types" id="keyword-types"></select>
+                        </li>
+                        <li id="keyword-options-container" class="hidden">
+                            <label for="keyword-options">Keyword Options</label>
+                            <textarea id="keyword-options" name="keyword-options" placeholder="Dropdown options. Separate with a comma or enter to add on new line"></textarea>
+                        </li>
+                        <li id="save-button">
+                            <button class="template-update-button" id="template-update-button" type="button">Update Template</button>
+                            <button class="template-delete-button" id="template-delete-button" type="button">Delete Template</button>
                         </li>
                     </div>
                 </div>

@@ -82,6 +82,7 @@ input, select {
 }
 
 #template-build-container,
+#template-edit-container,
 #email-templates-container {
     /* display: flex; */
     justify-content: center;
@@ -156,7 +157,8 @@ input, select {
     margin-bottom: 0;
 }
 
-#template-buttons-container {
+#template-buttons-container,
+#template-edit-buttons-container {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -260,7 +262,7 @@ input, select {
     font-size: 20px;
 }
 
-button, .grid-button  {
+button, .grid-button, .grid-edit-button {
     padding: 20px 16px;
     border: 2px solid #121212;
     background: #09b6aa;
@@ -270,6 +272,10 @@ button, .grid-button  {
     letter-spacing: .09em;
     border-radius: 2px;
     box-sizing: border-box;
+}
+
+.grid-edit-button, .template-edit-button {
+    background: #e63946;
 }
 
 .project-go-button {
@@ -287,6 +293,11 @@ button:hover,
     background: #63c7bc;
     border: 2px solid #575757;
     color: #121212;
+}
+
+.grid-edit-button:hover,
+.template-edit-button:hover {
+    background: #f3515e;
 }
 
 button:disabled {

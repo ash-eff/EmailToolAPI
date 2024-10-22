@@ -1,20 +1,24 @@
-import { updateKeywordsSavedList, updateKeywordOptionsList, hideKeywordTypes, clearKeywordOptions, removeKeywords } from './keywords.js';
+import { updateKeywordsSavedList, updateKeywordOptionsList, hideKeywordTypes, clearKeywordOptions, removeKeywords, setKeywordTypes } from './keywords.js';
 import { setProjects, currentProject } from './projects.js';
-import { saveTemplate, getEmailTemplates, generateEmail, resetTemplateForm } from './templates.js';
+import { saveTemplate, getEmailTemplates, generateEmail, resetTemplateForm, toggleTemplateButtons, loadEmailButtons, loadEditEmailButtons } from './templates.js';
 import { emailTemplatesView, 
     keywordTypes, 
-    emailBody, 
+    emailBody,
+    emailField, 
     keywordOptions, 
     templateSaveButton, 
     templateViewButton, 
     emailBackButton,
     templateBuildButton,
     emailGenerateButton,
-    templateBuildView } from './dom.js';
+    emailCopyButton,
+    templateBuildView,
+    templateEditButton
+ } from './dom.js';
 
 let currentView = emailTemplatesView;
 
-function setCurrentView(view) {
+export function setCurrentView(view) {
     currentView.classList.remove("visible");
     currentView.classList.add("hidden");
     view.classList.remove("hidden");
@@ -28,9 +32,26 @@ function toTitleCase(str) {
     });
 }
 
+async function copyEmailText() {
+    try {
+        if (!emailField.value) {
+            alert("No Email Text to Copy");
+            return;
+        }
+        const emailText = emailField.value;
+        console.log(emailText);
+        await navigator.clipboard.writeText(emailText);
+        alert("Email Text Copied");
+    } catch (err) {
+        console.error("Failed to copy text: ", err);
+        alert("Failed to copy text");
+    }
+}
+
 keywordTypes?.addEventListener("input", () => hideKeywordTypes());
 emailBody?.addEventListener("input", () => updateKeywordsSavedList());
 keywordOptions?.addEventListener("input", () => updateKeywordOptionsList());
+emailCopyButton?.addEventListener("click", () => copyEmailText());
 
 templateSaveButton?.addEventListener("click", () => {
     saveTemplate(toTitleCase)
@@ -41,26 +62,76 @@ templateSaveButton?.addEventListener("click", () => {
         clearKeywordOptions();
         removeKeywords();
         setCurrentView(emailTemplatesView);
-        getEmailTemplates(currentProject.id);
+        getEmailTemplates(currentProject.id)
+        .then(() => {
+            toggleTemplateButtons();
+            loadEmailButtons();
+        })
+        .catch((error) => {
+            console.error('Error fetching templates:', error);
+            alert(`Error: ${error}`);
+        });
     })
     .catch((error) => {
+        console.error('Error saving template:', error);
         alert(`Error: ${error}`);
     });
 });
 
 templateViewButton?.addEventListener("click", () => {
     setCurrentView(emailTemplatesView);
-    getEmailTemplates(currentProject.id);
+    if (currentProject) {
+        getEmailTemplates(currentProject.id)
+        .then(() => {
+            toggleTemplateButtons();
+            loadEmailButtons();
+        })
+        .catch((error) => {
+            console.error('Error fetching templates:', error);
+            alert(`Error: ${error}`);
+        });
+    }
+    else {
+        alert("Please select a project");
+    }
+
 });
 emailBackButton?.addEventListener("click", () => {
     setCurrentView(emailTemplatesView);
-    getEmailTemplates(currentProject.id);
+    getEmailTemplates(currentProject.id)
+    .then(() => {
+        toggleTemplateButtons();
+        loadEmailButtons();
+    })
+    .catch((error) => {
+        console.error('Error fetching templates:', error);
+        alert(`Error: ${error}`);
+    });
+});
+
+templateEditButton?.addEventListener("click", () => {
+    setCurrentView(emailTemplatesView);
+    if (currentProject) {
+        getEmailTemplates(currentProject.id)
+        .then(() => {
+            toggleTemplateButtons();
+            loadEditEmailButtons();
+        })
+        .catch((error) => {
+            console.error('Error fetching templates:', error);
+            alert(`Error: ${error}`);
+        });
+    }
+    else {
+        alert("Please select a project");
+    }
 });
 
 templateBuildButton?.addEventListener("click", () => setCurrentView(templateBuildView));
-emailGenerateButton?.addEventListener("click", () => generateEmail(emailField));
+emailGenerateButton?.addEventListener("click", () => generateEmail());
 
 templateSaveButton.disabled = true;
 setProjects();
+setKeywordTypes();
 // handleKeywordTypeClick();
 

@@ -68,3 +68,10 @@ def read_email_template(email_template_id: int):
 @router.get("/get_email_templates/", response_model=List[EmailTemplate])
 def read_email_templates():
     return crud.get_email_templates()
+
+@router.put("/update_email_template/{email_template_id}", response_model=EmailTemplate)
+def update_email_template_endpoint(email_template_id: int, updated_template: EmailTemplateCreate):
+    email_template = crud.update_email_template(email_template_id, updated_template)
+    if email_template is None:
+        raise HTTPException(status_code=404, detail="Email Template not found")
+    return email_template
