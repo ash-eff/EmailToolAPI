@@ -1,6 +1,25 @@
-import { updateKeywordsSavedList, updateKeywordOptionsList, hideKeywordTypes, clearKeywordOptions, removeKeywords, setKeywordTypes } from './keywords.js';
+import { updateKeywordsSavedList, 
+    updateKeywordOptionsList, 
+    hideKeywordTypes, 
+    clearKeywordOptions, 
+    clearRemovedKeywords, 
+    setKeywordTypes 
+} from './keywords.js';
+
 import { setProjects, currentProject } from './projects.js';
-import { saveTemplate, getEmailTemplates, generateEmail, resetTemplateForm, toggleTemplateButtons, loadEmailButtons, loadEditEmailButtons } from './templates.js';
+
+import { saveTemplate, 
+    updateTemplate,
+    getEmailTemplates, 
+    generateEmail, 
+    resetTemplateForm, 
+    toggleTemplateButtons, 
+    loadEmailButtons, 
+    loadEditEmailButtons, 
+    handleBuildEmailButtonClick, 
+    deleteTemplate
+} from './templates.js';
+
 import { emailTemplatesView, 
     keywordTypes, 
     emailBody,
@@ -12,8 +31,9 @@ import { emailTemplatesView,
     templateBuildButton,
     emailGenerateButton,
     emailCopyButton,
-    templateBuildView,
-    templateEditButton
+    templateEditButton,
+    templateUpdateButton,
+    templateDeleteButton
  } from './dom.js';
 
 let currentView = emailTemplatesView;
@@ -52,15 +72,59 @@ keywordTypes?.addEventListener("input", () => hideKeywordTypes());
 emailBody?.addEventListener("input", () => updateKeywordsSavedList());
 keywordOptions?.addEventListener("input", () => updateKeywordOptionsList());
 emailCopyButton?.addEventListener("click", () => copyEmailText());
-
+templateDeleteButton?.addEventListener("click", () => {
+    deleteTemplate()
+    .then((message) => {
+        alert(message);
+        resetTemplateForm();
+        clearKeywordOptions();
+        clearRemovedKeywords();
+        setCurrentView(emailTemplatesView);
+        getEmailTemplates(currentProject.id)
+        .then(() => {
+            toggleTemplateButtons();
+            loadEmailButtons();
+        })
+        .catch((error) => {
+            console.error('Error fetching templates:', error);
+            alert(`Error: ${error}`);
+        });
+    })
+    .catch((error) => {
+        console.error('Error deleting template:', error);
+        alert(`Error: ${error}`);
+    });  
+});
+templateUpdateButton?.addEventListener("click", () => {
+    updateTemplate(toTitleCase)
+    .then((message) => {
+        alert(message);
+        resetTemplateForm();
+        clearKeywordOptions();
+        clearRemovedKeywords();
+        setCurrentView(emailTemplatesView);
+        getEmailTemplates(currentProject.id)
+        .then(() => {
+            toggleTemplateButtons();
+            loadEmailButtons();
+        })
+        .catch((error) => {
+            console.error('Error fetching templates:', error);
+            alert(`Error: ${error}`);
+        });
+    })
+    .catch((error) => {
+        console.error('Error updating template:', error);
+        alert(`Error: ${error}`);
+    });  
+});
 templateSaveButton?.addEventListener("click", () => {
     saveTemplate(toTitleCase)
     .then((message) => {
         alert(message);
         resetTemplateForm();
-        updateKeywordsSavedList();
         clearKeywordOptions();
-        removeKeywords();
+        clearRemovedKeywords();
         setCurrentView(emailTemplatesView);
         getEmailTemplates(currentProject.id)
         .then(() => {
@@ -77,7 +141,6 @@ templateSaveButton?.addEventListener("click", () => {
         alert(`Error: ${error}`);
     });
 });
-
 templateViewButton?.addEventListener("click", () => {
     setCurrentView(emailTemplatesView);
     if (currentProject) {
@@ -108,7 +171,6 @@ emailBackButton?.addEventListener("click", () => {
         alert(`Error: ${error}`);
     });
 });
-
 templateEditButton?.addEventListener("click", () => {
     setCurrentView(emailTemplatesView);
     if (currentProject) {
@@ -127,11 +189,10 @@ templateEditButton?.addEventListener("click", () => {
     }
 });
 
-templateBuildButton?.addEventListener("click", () => setCurrentView(templateBuildView));
+templateBuildButton?.addEventListener("click", () => handleBuildEmailButtonClick());
 emailGenerateButton?.addEventListener("click", () => generateEmail());
 
 templateSaveButton.disabled = true;
 setProjects();
 setKeywordTypes();
-// handleKeywordTypeClick();
 

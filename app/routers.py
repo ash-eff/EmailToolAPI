@@ -9,14 +9,14 @@ router = APIRouter()
 def create_project(project: ProjectCreate):
     return crud.create_project(project)
 
-@router.get("/get_projects/{project_id}", response_model=Project)
+@router.get("/projects/{project_id}", response_model=Project)
 def read_project(project_id: int):
     project = crud.get_project(project_id)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
     return project
 
-@router.get("/get_projects/", response_model=List[Project])
+@router.get("/projects/", response_model=List[Project])
 def read_projects():
     return crud.get_projects()
 
@@ -39,14 +39,14 @@ def read_users():
 def create_keyword(keyword: KeyWordCreate):
     return crud.create_keyword(keyword)
 
-@router.get("/get_keywords/{keyword_id}", response_model=KeyWord)
+@router.get("/keywords/{keyword_id}", response_model=KeyWord)
 def read_keyword(keyword_id: int):
     keyword = crud.get_keyword(keyword_id)
     if keyword is None:
         raise HTTPException(status_code=404, detail="Keyword not found")
     return keyword
 
-@router.get("/get_keywords/", response_model=List[KeyWord])
+@router.get("/keywords/", response_model=List[KeyWord])
 def read_keywords():
     return crud.get_keywords()
 
@@ -54,24 +54,45 @@ def read_keywords():
 def read_keyword_types():
     return crud.get_keyword_types()
 
+@router.put("/keywords/{keyword_id}", response_model=KeyWord)
+def update_keyword(keyword_id: int, updated_keyword: KeyWordCreate):
+    keyword = crud.update_keyword(keyword_id, updated_keyword)
+    if keyword is None:
+        raise HTTPException(status_code=404, detail="Keyword not found")
+    return keyword
+
+@router.delete("/keywords/{keyword_id}")
+def delete_keyword(keyword_id: int):
+    keyword = crud.delete_keyword(keyword_id)
+    if keyword is None:
+        raise HTTPException(status_code=404, detail="Keyword not found")
+    return {"message": "Keyword deleted successfully"}
+
 @router.post("/email_templates/", response_model=EmailTemplate)
 def create_email_template(email_template: EmailTemplateCreate):
     return crud.create_email_template(email_template)
 
-@router.get("/get_email_templates/{email_template_id}", response_model=EmailTemplate)
+@router.get("/email_templates/{email_template_id}", response_model=EmailTemplate)
 def read_email_template(email_template_id: int):
     email_template = crud.get_email_template(email_template_id)
     if email_template is None:
         raise HTTPException(status_code=404, detail="Email Template not found")
     return email_template
 
-@router.get("/get_email_templates/", response_model=List[EmailTemplate])
+@router.get("/email_templates/", response_model=List[EmailTemplate])
 def read_email_templates():
     return crud.get_email_templates()
 
-@router.put("/update_email_template/{email_template_id}", response_model=EmailTemplate)
+@router.put("/email_templates/{email_template_id}", response_model=EmailTemplate)
 def update_email_template_endpoint(email_template_id: int, updated_template: EmailTemplateCreate):
     email_template = crud.update_email_template(email_template_id, updated_template)
     if email_template is None:
         raise HTTPException(status_code=404, detail="Email Template not found")
     return email_template
+
+@router.delete("/email_templates/{email_template_id}")
+def delete_email_template(email_template_id: int):
+    email_template = crud.delete_email_template(email_template_id)
+    if email_template is None:
+        raise HTTPException(status_code=404, detail="Email Template not found")
+    return {"message": "Email Template deleted successfully"}

@@ -9,7 +9,7 @@ export let currentProject = null;
 
 export async function setProjects() {
     try {
-        const response = await fetch("http://localhost:8000/get_projects/");
+        const response = await fetch("http://localhost:8000/projects/");
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);

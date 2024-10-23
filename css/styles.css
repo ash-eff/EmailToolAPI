@@ -187,7 +187,7 @@ input, select {
     width: 100%;
 }
 
-#save-button {
+#save-button, #edit-button {
     margin-top: auto;
 }
 
@@ -274,7 +274,9 @@ button, .grid-button, .grid-edit-button {
     box-sizing: border-box;
 }
 
-.grid-edit-button, .template-edit-button {
+.grid-edit-button, 
+.template-edit-button,
+.template-delete-button {
     background: #e63946;
 }
 
@@ -296,7 +298,8 @@ button:hover,
 }
 
 .grid-edit-button:hover,
-.template-edit-button:hover {
+.template-edit-button:hover,
+.template-delete-button:hover {
     background: #f3515e;
 }
 

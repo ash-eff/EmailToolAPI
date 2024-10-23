@@ -1,4 +1,12 @@
-import { keywords, populateSavedKeywords, updateKeywordOptionsList, setKeywordTypes } from "./keywords.js";
+import { keywords,
+    populateSavedKeywords, 
+    updateKeywordOptionsList, 
+    setKeywordTypes, 
+    resetKeywordForm, 
+    clearKeywordList, 
+    saveKeywords,
+    updateKeywords,
+    deleteKeywords } from "./keywords.js";
 import { currentProject } from "./projects.js";
 import { setCurrentView } from "./main.js";
 
@@ -11,18 +19,20 @@ import { templateButtons,
     emailGenerateButton,
     templateButtonsContainer,
     templateContainer,
-    templateEditView
+    templateBuildView,
+    templateSaveButtonContainer,
+    templateEditButtonContainer
 } from "./dom.js";
 
 export let currentEmailTemplate = null;
 export const emailTemplates = [];
 
-export async function getEmailTemplates(projectId, isEditing = false) {
+export async function getEmailTemplates(projectId) {
     toggleEmailTemplateView(false);
 
     return new Promise(async (resolve, reject) => {
         try {
-            const response = await fetch(`http://localhost:8000/get_email_templates/`);
+            const response = await fetch(`http://localhost:8000/email_templates/`);
     
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -46,48 +56,10 @@ export async function getEmailTemplates(projectId, isEditing = false) {
 }
 
 export async function saveTemplate(toTitleCase) {
-    if (templateTitle.value === "") {
-        alert("Please enter a title for the template.");
-        return;
-    }
-
-    if (emailBody.value === "") {
-        alert("Please enter a body for the email.");
-        return;
-    }
-
-    if (keywords.size === 0) {
-        alert("Please add keywords to the template.");
-        return;
-    }
-
     try {
-        let keywordList = [];
+        await validateTemplate();
 
-        for (let keyword of keywords.values()) {
-            if (keyword.name !== "") {
-                const newKeyword = {
-                    name: keyword.name,
-                    type: keyword.type,
-                    options: keyword.options
-                };
-
-                const response = await fetch("http://localhost:8000/keywords/", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(newKeyword)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to save keyword: ${keyword.name}`);
-                }
-
-                const data = await response.json();
-                keywordList.push(data);
-            }
-        }
+        let keywordList = await saveKeywords(keywords);
 
         let processedEmailBody = emailBody.value.replace(/\{([^\}]+)\}/g, (match, keyword) => {
             return `{${toTitleCase(keyword)}}`;
@@ -114,8 +86,84 @@ export async function saveTemplate(toTitleCase) {
 
         return Promise.resolve("Template saved successfully!");
     } catch (error) {
+        console.error("Error in saveTemplate:", error);
         return Promise.reject(error.message);
     }
+}
+
+export async function updateTemplate(toTitleCase) {
+    try {
+        await validateTemplate();
+
+        let keywordList = await updateKeywords(keywords);
+
+        let processedEmailBody = emailBody.value.replace(/\{([^\}]+)\}/g, (match, keyword) => {
+            return `{${toTitleCase(keyword)}}`;
+        });
+
+        const template = {
+            name: templateTitle.value,
+            body: processedEmailBody,
+            keywords: keywordList,
+            project: currentProject
+        };
+
+        const templateResponse = await fetch(`http://localhost:8000/email_templates/${currentEmailTemplate.id}/`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(template)
+        });
+
+        if (!templateResponse.ok) {
+            throw new Error("Failed to update template");
+        }
+
+        return Promise.resolve("Template updated successfully!");
+    }
+    catch (error) {
+        console.error("Error in updateTemplate:", error);
+        return Promise.reject(error.message);
+    }
+}
+
+export async function deleteTemplate() {
+    if (!confirm("Are you sure you want to delete this template?")) {
+        return Promise.reject("Template deletion cancelled.");
+    }   
+
+    try {
+        await deleteKeywords(keywords);
+
+        const response = await fetch(`http://localhost:8000/email_templates/${currentEmailTemplate.id}/`, {
+            method: "DELETE"
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to delete template");
+        }
+
+        return Promise.resolve("Template deleted successfully!");
+    } catch (error) {
+        return Promise.reject(error.message);
+    }
+}
+
+function validateTemplate() {
+    if (templateTitle.value === "") {
+        return Promise.reject("Please enter a title for the template.");
+    }
+
+    if (emailBody.value === "") {
+        return Promise.reject("Please enter a body for the email.");
+    }
+
+    if (keywords.size === 0) {
+        return Promise.reject("Please add keywords to the template.");
+    }
+
+    return Promise.resolve();
 }
 
 export function generateEmail() {
@@ -146,6 +194,28 @@ export function generateEmail() {
     emailBodyText += "\n" + currentProject.signature_block;
 
     emailField.value = emailBodyText;
+}
+
+function showSaveButton(show){
+    if (show) {
+        templateSaveButtonContainer.classList.remove("hidden");
+        templateSaveButtonContainer.classList.add("visible");
+    }
+    else {
+        templateSaveButtonContainer.classList.remove("visible");
+        templateSaveButtonContainer.classList.add("hidden");
+    }
+}
+
+function showEditButton(show){
+    if (show) {
+        templateEditButtonContainer.classList.remove("hidden");
+        templateEditButtonContainer.classList.add("visible");
+    }
+    else {
+        templateEditButtonContainer.classList.remove("visible");
+        templateEditButtonContainer.classList.add("hidden");
+    }
 }
 
 function clearEmailForm() {
@@ -198,8 +268,22 @@ export function handleEmailButtonClick(template) {
     }
 }
 
+export function handleBuildEmailButtonClick() {
+    resetTemplateForm();
+    resetKeywordForm();
+    clearKeywordList();
+    showSaveButton(true);
+    showEditButton(false);
+    setCurrentView(templateBuildView);
+}
+
 export function handleEditEmailButtonClick(template) {
-    setCurrentView(templateEditView);
+    resetTemplateForm();
+    resetKeywordForm();
+    clearKeywordList();
+    showSaveButton(false);
+    showEditButton(true);
+    setCurrentView(templateBuildView);
     currentEmailTemplate = template;
     templateTitle.value = currentEmailTemplate.name;
     emailBody.value = currentEmailTemplate.body;
@@ -211,7 +295,6 @@ export function handleEditEmailButtonClick(template) {
 export function resetTemplateForm() {
     templateTitle.value = "";
     emailBody.value = "";
-    keywords.clear();
 }
 
 function toggleEmailTemplateView(turnOn) {

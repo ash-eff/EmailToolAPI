@@ -37,7 +37,7 @@
                         <div id="template-buttons" class="hidden">
                         </div>
                         <div id="template-warning-text" class="center-item center-item-veritcal hidden">
-                            No templates available.
+                            No templates available for this project.
                         </div>
                     </div>  
                     <div id="template-container" class="hidden center-item">
@@ -83,8 +83,12 @@
                             <label for="keyword-options">Keyword Options</label>
                             <textarea id="keyword-options" name="keyword-options" placeholder="Dropdown options. Separate with a comma or enter to add on new line"></textarea>
                         </li>
-                        <li id="save-button">
+                        <li class="hidden" id="save-button">
                             <button class="template-save-button" id="template-save-button" type="button">Save Template</button>
+                        </li>
+                        <li class="visible" id="edit-button">
+                            <button class="template-update-button" id="template-update-button" type="button">Update Template</button>
+                            <button class="template-delete-button" id="template-delete-button" type="button">Delete Template</button>
                         </li>
                     </div>
                 </div>

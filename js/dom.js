@@ -22,10 +22,13 @@ export const templateButtons = document.getElementById("template-buttons");
 export const templateButtonsContainer = document.getElementById("template-buttons-container");
 export const templateContainer = document.getElementById("template-container");
 export const templateBuildView = document.getElementById("template-build-container");
-export const templateEditView = document.getElementById("template-edit-container");
 export const templateViewButton = document.getElementById("template-view-button");
 export const templateBuildButton = document.getElementById("template-build-button");
 export const templateSaveButton = document.getElementById("template-save-button");
 export const templateEditButton = document.getElementById("template-edit-button");
+export const templateUpdateButton = document.getElementById("template-update-button");
+export const templateDeleteButton = document.getElementById("template-delete-button");
+export const templateSaveButtonContainer = document.getElementById("save-button");
+export const templateEditButtonContainer = document.getElementById("edit-button");
 
 

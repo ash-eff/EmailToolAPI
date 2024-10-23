@@ -34,7 +34,6 @@ export function updateKeywordsSavedList() {
 
         if (!keywords.has(keyword)) {
             if(removedKeywords.has(keyword)) {
-                console.log("Updating: " + keyword);
                 newKeyword.name = keyword;
                 newKeyword.type = removedKeywords.get(keyword).type;
                 newKeyword.options = removedKeywords.get(keyword).options;
@@ -42,7 +41,6 @@ export function updateKeywordsSavedList() {
                 removedKeywords.delete(keyword);
             }
             else {
-                console.log("Adding: " + keyword);
                 newKeyword.name = keyword;
                 newKeyword.type = keywordTypes[0].value;
                 keywords.set(keyword, newKeyword);
@@ -96,6 +94,89 @@ export function updateKeywordOptionsList() {
     currentKeyword.options = options; 
 }
 
+export async function saveKeywords(keywords) {
+    let keywordList = [];
+
+    for (let keyword of keywords.values()) {
+        if (keyword.name !== "") {
+            let response, data;
+
+            const newKeyword = {
+                name: keyword.name,
+                type: keyword.type,
+                options: keyword.options
+            };
+
+            response = await fetch("http://localhost:8000/keywords/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newKeyword)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to save keyword: ${keyword.name}`);
+            }
+
+            data = await response.json();
+            keywordList.push(data);
+        }
+    }
+
+    return keywordList;
+}
+
+export async function updateKeywords(keywords) {
+    const keywordList = [];
+
+    for (let keyword of keywords.values()) {
+        if (keyword.name !== "") {
+            let response, data;
+
+            if (keyword.id === undefined) {
+                response = await fetch("http://localhost:8000/keywords/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(keyword)
+                });
+            } else {
+                response = await fetch(`http://localhost:8000/keywords/${keyword.id}/`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(keyword)
+                });
+            }
+
+            if (!response.ok) {
+                throw new Error(`Failed to ${keyword.id === undefined ? 'create' : 'update'} keyword: ${keyword.name}`);
+            }
+
+            data = await response.json();
+            keyword.id = data.id;
+            keywordList.push(data);
+        } else {
+            console.warn("Skipping keyword with empty name:", keyword);
+        }
+    }
+
+    return keywordList;
+}
+
+export async function deleteKeywords(keywords) {
+    for (let keyword of keywords.values()) {
+        if (keyword.id !== undefined) {
+            fetch(`http://localhost:8000/keywords/${keyword.id}/`, {
+                method: "DELETE"
+            });
+        }
+    }
+}
+
 export async function setKeywordTypes() {
     try {
         const response = await fetch("http://localhost:8000/keyword_types/");
@@ -141,7 +222,8 @@ function updateKeywordOptions(options) {
     keywordOptions.value = options;
 }
 
-function resetKeywordForm() {
+export function resetKeywordForm() {
+    clearKeywords();
     updateKeywordName("");
     updateKeywordType("Input Field");
     clearKeywordOptions();
@@ -165,22 +247,18 @@ export function handleKeywordTypeClick(type, keywordName) {
     keyword.type = type;
 }
 
-// function handleKeywordSelection() {
-//     let selected = keywordsSavedList.selectedIndex = keywordsSavedList.length - 1;
-//     if (selected >= 0) {
-//         updateKeywordName(keywordsSavedList[selected].value);
-//         updateKeywordType(keywords.get(keywordsSavedList[selected].value).type);
-//         updateKeywordOptions(keywords.get(keywordsSavedList[selected].value).options);
-//         hideKeywordTypes();
-//     } else {
-//         resetKeywordForm();
-//     }
-// }
-
 export function clearKeywordOptions() {
     keywordOptions.value = "";
 }
 
-export function removeKeywords() {
+export function clearRemovedKeywords() {
     removedKeywords.clear();
+}
+
+export function clearKeywordList() {
+    keywordsSavedList.innerHTML = '';
+}
+
+function clearKeywords() {
+    keywords.clear();
 }

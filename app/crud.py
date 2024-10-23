@@ -71,6 +71,21 @@ def get_keyword_types() -> List[KeywordType]:
 def get_keywords() -> List[KeyWord]:
     return keywords_db
 
+def delete_keyword(keyword_id: int) -> Optional[KeyWord]:
+    for index, keyword in enumerate(keywords_db):
+        if keyword.id == keyword_id:
+            return keywords_db.pop(index)
+    return None
+
+def update_keyword(keyword_id: int, updated_keyword: KeyWordCreate) -> Optional[KeyWord]:
+    for index, keyword in enumerate(keywords_db):
+        if keyword.id == keyword_id:
+            keywords_db[index].name = updated_keyword.name
+            keywords_db[index].type = updated_keyword.type
+            keywords_db[index].options = updated_keyword.options
+            return keywords_db[index]
+    return None
+
 def create_email_template(email_template: EmailTemplateCreate) -> EmailTemplate:
     email_template_id = len(email_templates_db) + 1
     new_email_template = EmailTemplate(
@@ -100,4 +115,10 @@ def update_email_template(email_template_id: int, updated_template: EmailTemplat
             email_templates_db[index].keywords = updated_template.keywords
             email_templates_db[index].project = updated_template.project
             return email_templates_db[index]
+    return None
+
+def delete_email_template(email_template_id: int) -> Optional[EmailTemplate]:
+    for index, email_template in enumerate(email_templates_db):
+        if email_template.id == email_template_id:
+            return email_templates_db.pop(index)
     return None
